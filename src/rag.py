@@ -4,11 +4,11 @@ RAG (Retrieval-Augmented Generation) pipeline for VibeMatcher.
 Components:
   - SongDocument   : text description of a song for TF-IDF indexing
   - Retriever      : TF-IDF + cosine similarity over the song catalog
-  - RAGRecommender : orchestrates retrieval → augmented prompt → Claude generation
+  - RAGRecommender : orchestrates retrieval → augmented prompt → Groq generation
 
 Reliability features:
   - Structured logging (INFO for normal flow, WARNING for low-confidence results)
-  - Error handling around the Claude API call with a graceful fallback message
+  - Error handling around the Groq API call with a graceful fallback message
   - confidence score attached to every result (composite of retrieval + diversity)
 """
 
@@ -19,7 +19,7 @@ from typing import List, Dict, Tuple, Any
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import anthropic
+from groq import Groq, APIError
 
 logger = logging.getLogger(__name__)
 
@@ -109,18 +109,19 @@ class RAGRecommender:
     Full RAG pipeline:
       1. Retrieve top-k song documents for the user's query
       2. Build an augmented prompt with those songs as context
-      3. Call Claude to generate a natural language recommendation
+      3. Call Groq to generate a natural language recommendation
       4. Attach a confidence score to the result
     """
 
-    def __init__(self, songs: List[Dict]):
+    def __init__(self, songs: List[Dict], model: str = "llama-3.3-70b-versatile"):
         documents = [build_song_document(s) for s in songs]
         self.retriever = Retriever(documents)
-        self.client = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY from env
+        self.model = model
+        self.client = Groq()  # reads GROQ_API_KEY from env
 
     def recommend(self, query: str, k: int = 3) -> Dict[str, Any]:
         """
-        Given a natural language query, return retrieved songs, a Claude-generated
+        Given a natural language query, return retrieved songs, a Groq-generated
         recommendation, and a confidence score.
 
         Returns:
@@ -154,23 +155,28 @@ class RAGRecommender:
         )
 
         try:
-            message = self.client.messages.create(
-                model="claude-sonnet-4-6",
+            completion = self.client.chat.completions.create(
+                model=self.model,
                 max_tokens=512,
-                system=(
-                    "You are a concise music recommendation assistant. "
-                    "Only recommend songs from the provided list. "
-                    "Be specific about musical qualities like mood, energy, and genre."
-                ),
-                messages=[{"role": "user", "content": prompt}],
+                messages=[
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are a concise music recommendation assistant. "
+                            "Only recommend songs from the provided list. "
+                            "Be specific about musical qualities like mood, energy, and genre."
+                        ),
+                    },
+                    {"role": "user", "content": prompt},
+                ],
             )
-            generated = message.content[0].text
+            generated = completion.choices[0].message.content
             logger.info(
                 "Generation complete. Confidence=%.3f. Response length=%d chars.",
                 confidence, len(generated),
             )
-        except anthropic.APIError as exc:
-            logger.error("Claude API error for query %r: %s", query, exc)
+        except APIError as exc:
+            logger.error("Groq API error for query %r: %s", query, exc)
             generated = (
                 "Sorry, the recommendation service is temporarily unavailable. "
                 "Please try again later."

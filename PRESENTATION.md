@@ -123,7 +123,7 @@ layer handles the fuzzy, conversational queries that the scorer can't touch."
 **Demo action:** Run the following in your terminal (requires your API key):
 
 ```bash
-export ANTHROPIC_API_KEY="sk-ant-..."
+export GROQ_API_KEY="gsk_..."
 python - <<'EOF'
 import logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")

@@ -184,20 +184,21 @@ def test_evaluate_scores_in_range():
 # ---------------------------------------------------------------------------
 
 def test_rag_recommender_full_pipeline(sample_songs):
-    """[HUMAN REVIEW] End-to-end smoke test with a mocked Claude response.
+    """[HUMAN REVIEW] End-to-end smoke test with a mocked Groq response.
     A human should inspect real API outputs for tone, accuracy, and hallucination
     before this system is used in production."""
     from src.rag import RAGRecommender
 
-    mock_msg = MagicMock()
-    mock_msg.content = [
-        MagicMock(text="I recommend Sunrise City — its upbeat pop energy matches perfectly.")
-    ]
+    # Groq returns an OpenAI-style response: choices[0].message.content
+    mock_completion = MagicMock()
+    mock_completion.choices[0].message.content = (
+        "I recommend Sunrise City — its upbeat pop energy matches perfectly."
+    )
 
-    with patch("anthropic.Anthropic") as mock_anthropic_cls:
+    with patch("src.rag.Groq") as mock_groq_cls:
         mock_client = MagicMock()
-        mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = mock_msg
+        mock_groq_cls.return_value = mock_client
+        mock_client.chat.completions.create.return_value = mock_completion
 
         rag = RAGRecommender(sample_songs)
         result = rag.recommend("happy pop music for a party", k=3)

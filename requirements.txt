@@ -1,6 +1,6 @@
 pandas
 pytest
 streamlit
-anthropic
+groq
 scikit-learn
 numpy

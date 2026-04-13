@@ -72,7 +72,7 @@ User query (natural language)
 
 ## Setup Instructions
 
-**Prerequisites:** Python 3.10+, an `ANTHROPIC_API_KEY` environment variable
+**Prerequisites:** Python 3.10+, a `GROQ_API_KEY` environment variable
 (only needed for the RAG generator; all other features work without it).
 
 ```bash
@@ -89,7 +89,7 @@ source .venv/bin/activate        # macOS / Linux
 pip install -r requirements.txt
 
 # 4. (RAG only) Set your Anthropic API key
-export ANTHROPIC_API_KEY="sk-ant-..."
+export GROQ_API_KEY="gsk_..."
 
 # 5. Run the original weighted recommender
 python -m src.main
