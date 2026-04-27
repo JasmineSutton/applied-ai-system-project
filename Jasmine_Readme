@@ -1,0 +1,48 @@
+
+## Final Project Evaluation & Feedback
+
+### Evaluation Paragraph
+I thought the VibeMatcher project is clearly explained. It has a well-articulated problem statement and a meaningful integration of AI through both content-based recommendation and  Retrieval-Augmented Generation (RAG). 
+The updated architecture is thoughtfully designed, separating the initial recommender and the RAG conversational interface, and the documentation highlights both the technical and user experience aspects. 
+Reliability and evaluation are addressed through structured logging, error handling, and  evaluation metrics. The design decisions, such as the use of TF-IDF retrieval and the handling of adversarial user profiles, are discussed, though some tradeoffs such as limitations of the dataset or model could be further elaborated. 
+
+
+---
+
+### Glows
+
+1. **Technical Strength:**  
+	The project demonstrates strong technical depth by combining traditional content-based recommendation with a modern RAG pipeline, leveraging TF-IDF retrieval and LLM-based explanation. The inclusion of structured evaluation metrics (relevance, diversity, explanation coverage) is a great approach to system assessment.
+
+2. **Communication/Presentation Strength:**  
+	The documentation is clear and well-organized, providing both high-level summaries and detailed module descriptions. The use of diagrams and explicit explanations of design choices makes the system accessible to both technical and non-technical audiences.
+
+---
+
+### Grows
+
+1. **Technical Depth Improvement:**  
+	While the codebase is well-organized and the main recommender runs, I was unable to run any tests or the RAG module as a user. Ensuring that all modules and tests are runnable out-of-the-box (with clear instructions or scripts) would greatly improve the technical use and evaluability of the project. 
+
+2. **Presentation/Explanation Improvement:**  
+	Some design tradeoffs—such as the limitations of the song dataset, potential biases in recommendations, or the scalability of the approach—could be discussed a bit more to provide a fuller picture of the system’s strengths and weaknesses.
+
+---
+
+### Action Steps
+
+1. **Expand Evaluation:**  
+	Incorporate additional evaluation methods for the RAG explanations, such as collecting user feedback or using established NLP metrics, to better assess the quality and helpfulness of generated responses.
+
+2. **Discuss Limitations:**  
+	Add a section to the documentation that explicitly addresses dataset limitations, model biases, and potential failure cases, along with ideas for future improvement.
+
+---
+
+### Probing Questions
+
+1. What specific decision(s) is your AI system helping the user make, and how does the RAG layer enhance this process?
+2. How did you validate that the recommendations and explanations provided by your system are both relevant and reliable?
+3. If the RAG/LLM component were removed, what would be lost in terms of user experience or system capability?
+
+---
